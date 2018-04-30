@@ -1,6 +1,6 @@
 # Everyday One Shader
 My practice of GLSL Live Coding.  
-I use [VEDA](https://veda.gl/) that is Atom package for GLSL live coding.
+I use [VEDA](https://veda.gl/) that is Atom package for GLSL live coding.  
 There is no file using through glslify, and these codes I put at here are not organized. So these codes probably will not run on your machine.
 
 ---
