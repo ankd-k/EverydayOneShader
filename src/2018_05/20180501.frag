@@ -1,5 +1,5 @@
 /*{
-    "pixelRatio": 2.0,
+    "pixelRatio": .0,
 }*/
 precision mediump float;
 
@@ -176,8 +176,8 @@ void main(){
   dir.xz *= rotate(t+PI*.5);
 
   float d = 0.;
-  for(int i=0;i<32;i++){
-      float tmp = df(camPos + d*dir)*0.4;
+  for(int i=0;i<24;i++){
+      float tmp = df(camPos + d*dir)*0.5;
       if(tmp<0.001)break;
       d += tmp;
   }
