@@ -8,3 +8,4 @@ There is no file using through glslify, and these codes I put at here are not or
 GLSLライブコーディングの練習で制作したコードです。  
 実行にはatomパッケージの[VEDA](https://veda.gl/)を使用しています。  
 いくつかのコードではglslifyを使用しており、またほとんどのコードは整理していません。  
+別環境での動作は保証していません。
