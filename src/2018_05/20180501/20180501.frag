@@ -1,5 +1,5 @@
 /*{
-    "pixelRatio": .0,
+    "pixelRatio": 2.,
 }*/
 precision mediump float;
 
