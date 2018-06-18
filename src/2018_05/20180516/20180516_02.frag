@@ -4,7 +4,6 @@
   "vertexCount": 800000,
   "vertexMode": "POINTS",
   "PASSES": [
-    {
       fs: "./velocity.frag",
       TARGET: "velocityTexture",
       FLOAT: true,
