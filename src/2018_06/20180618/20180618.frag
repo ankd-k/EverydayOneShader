@@ -1,10 +1,14 @@
 /*{
   "pixelRatio": 1.,
   "frameskip": 2,
-  "vertexCount": 600000.,
+  "vertexCount": 1000.,
   "vertexMode": "POINTS",
 
   "PASSES": [
+    {
+      fs: "img.frag",
+      TARGET: "imgTexture",
+    },
     {
       fs: "camera.frag",
       TARGET: "cameraTexture",
@@ -46,13 +50,12 @@ void main(){
     vec2 uv = gl_FragCoord.xy/resolution;
     vec2 p = (gl_FragCoord.xy*2.-resolution)/min(resolution.x, resolution.y);
 
-    vec4 scene = texture2D(sceneTexture, uv);
+    vec4 scene = texture2D(sceneTexture, uv)*0.8;
     // gl_FragColor = texture2D(sceneTexture, uv);
     gl_FragColor = vec4(0.95);
     // gl_FragColor.rgb -= scene.rgb;
     gl_FragColor -= scene;
-
-    // gl_FragColor.a = scene.a;
     // gl_FragColor = scene;
+
     gl_FragColor *= clamp(1./length(p), 0., 1.);
 }

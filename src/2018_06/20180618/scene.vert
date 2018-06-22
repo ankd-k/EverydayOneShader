@@ -10,12 +10,11 @@ uniform vec2 resolution;
 attribute float vertexId;
 uniform float vertexCount;
 uniform float time;
-uniform vec3 mouseButtons;
-const float pointSize = 2.0;
+const float pointSize = 0.1;
 varying vec4 v_color;
 
 // const vec4 globalColor = vec4(.3, .4, .8, 0.7);
-const vec4 globalColor = vec4(1., 1., 1., 0.4);
+const vec4 globalColor = vec4(1., 1., 1., 0.5);
 
 
 mat4 getCameraMatrix(){
@@ -41,8 +40,8 @@ void main(){
     vec4 velocity = texture2D(velocityTexture, uv);
 
     gl_Position = getCameraMatrix() * vec4(position.xyz, 1);
-    // gl_PointSize = pointSize * max(position.w * 1.25, 0.75);
-    gl_PointSize = 1.0;
+    gl_PointSize = pointSize * max(position.w * 1.25, 0.75);
+    // gl_PointSize = 10.0;
 
     v_color = globalColor;
 }
