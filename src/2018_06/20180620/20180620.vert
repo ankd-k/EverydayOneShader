@@ -1,15 +1,49 @@
 /*{
+    "vertexCount": 10000.,
+    "vertexMode": "POINTS",
+
+    "PASSES":[
+      {
+        fs: "camera.frag",
+        TARGET: "cameraTexture",
+        FLOAT: true,
+      },
+      {
+
+      },
+    ],
 }*/
 precision mediump float;
+
+attribute float vertexId;
+uniform float vertexCount;
 
 uniform vec2 resolution;
 uniform vec2 mouse;
 uniform float time;
 
-uniform int PASSINDEX;
-uniform sampler2D buff;
+uniform sampler2D cameraTexture;
+
+varying vec4 v_color;
 
 const float PI = 3.14159265359;
+
+mat4 getCameraMatrix(){
+    vec4 v0 = texture2D(cameraTexture, vec2(0.));
+    vec4 v1 = texture2D(cameraTexture, vec2(0.25,0.));
+    vec4 v2 = texture2D(cameraTexture, vec2(0.5,0.));
+    vec4 v3 = texture2D(cameraTexture, vec2(0.75,0.));
+    return mat4(
+        v0.x, v0.y, v0.z, v0.w,
+        v1.x, v1.y, v1.z, v1.w,
+        v2.x, v2.y, v2.z, v2.w,
+        v3.x, v3.y, v3.z, v3.w
+    );
+}
+
+float random(vec2 n){
+  return fract(sin(dot(n, vec2(12.9898, 4.1414)))*43123.9898);
+}
 
 vec3 mod289(vec3 x){
   return x-floor(x*(1.0/289.0))*289.0;
@@ -53,16 +87,22 @@ float snoise(vec2 v) {
     return 130.0 * dot(m, g);
 }
 
+
 void main(){
     float t = mod(time, 60.);
-    vec2 uv = gl_FragCoord.xy/resolution;
-    vec2 p = (gl_FragCoord.xy*2.-resolution)/min(resolution.x, resolution.y);
-    vec3 color = vec3(0.);
+    vec3 pos = vec3(0.);
 
-    float sn = snoise(vec2(p.x*2.2*sin(p.y*1.5), t*0.4));
-    for(int i=0;i<3;i++){
-      sn = snoise(vec2((p.x*1.5+sn)*sin((p.y+sn+t*2.)), t*0.4));
-    }
+    pos.x = random(vec2(vertexId, 0.));
+    pos.y = random(vec2(vertexId, 1.));
+    pos.z = random(vec2(vertexId, 2.));
 
-    gl_FragColor = vec4(sn);
+    pos = pos*2.-1.;
+
+    gl_Position = getCameraMatrix() * vec4(pos, 1.);
+    gl_PointSize = 1.2;
+    // v_color = vec4((snoise(vec2(t,vertexId))+1.)*0.5);
+    v_color.r = (snoise(vec2(t,vertexId+0.))+0.)*0.5;
+    v_color.g = (snoise(vec2(t,vertexId+1.))+0.)*0.5;
+    v_color.b = (snoise(vec2(t,vertexId+2.))+0.)*0.5;
+    v_color.a = 1.;
 }

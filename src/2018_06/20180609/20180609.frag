@@ -37,7 +37,7 @@ void main(){
     color.g += noise(vec3(uv, t+100.));
     color.b += noise(vec3(uv, t+200.));
 
-    color = vec3(noise(vec3(uv, t)));
+    // color = vec3(noise(vec3(uv, t)));
 
     gl_FragColor = vec4(color, 1.);
 }

@@ -4,7 +4,7 @@
 
 "PASSES":[
   {
-    "vs": "20180611.vert",
+    "vs": "20180610.vert",
     "BLEND": "ADD",
   },
 ],
