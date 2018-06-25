@@ -26,7 +26,7 @@ void main(){
       vec2 m = vec2(cos(t+fi*fi), sin(t+fi*fi))*fi*0.15+0.5;
       vec2 v = uv - m;
       vec2 n = normalize(v);
-      float min = 0.; float max = 0.3;
+      float min = 0.; float max = 0.5;
       float l = clamp(0.3/length(v), min, max);
       p -= n*l;
     }
