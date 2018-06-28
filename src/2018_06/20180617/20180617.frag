@@ -1,7 +1,7 @@
 /*{
   "pixelRatio": 1.,
-  "frameskip": 2,
-  "vertexCount": 600000.,
+  "frameskip": 1,
+  "vertexCount": 1500000.,
   "vertexMode": "POINTS",
 
   "PASSES": [
@@ -54,5 +54,5 @@ void main(){
 
     // gl_FragColor.a = scene.a;
     // gl_FragColor = scene;
-    gl_FragColor *= clamp(1./length(p), 0., 1.);
+    gl_FragColor *= clamp(1./length(p), 0., 1.2);
 }

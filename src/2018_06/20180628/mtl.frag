@@ -57,12 +57,13 @@ void main(){
     float t = mod(time, 60.);
     vec2 uv = gl_FragCoord.xy/resolution;
     vec2 p = (gl_FragCoord.xy*2.-resolution)/min(resolution.x, resolution.y);
-    vec3 color = vec3(0.);
+    vec3 color = vec3(0.4);
 
     float sn = snoise(vec2(cos(p.x*1.2)+sin(p.y*1.5), t*0.4));
     for(int i=0;i<4;i++){
       sn = snoise(vec2(sin(p.x*0.5+sn)*sin((p.y*3.9+sn+t*2.)), t*0.3));
     }
 
-    gl_FragColor = vec4(sn);
+    color += (sn);
+    gl_FragColor += vec4(color, 1.);
 }

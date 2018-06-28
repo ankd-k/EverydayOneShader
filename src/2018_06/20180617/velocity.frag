@@ -97,7 +97,6 @@ vec3 snoise3(vec3 v){
     );
 }
 
-
 vec3 reset(){
   vec2 p = gl_FragCoord.st / resolution * 100.;
   return vec3(0.);

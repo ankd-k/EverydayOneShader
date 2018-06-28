@@ -17,6 +17,7 @@ float random(vec2 n){
 }
 
 vec4 reset(){
+  // position
   vec2 p = gl_FragCoord.st / resolution * 100.;
   float s =  sin(p.y * PI);
   float x =  cos(p.x * PI2 + p.y) * s;
@@ -24,6 +25,13 @@ vec4 reset(){
   float z =  sin(p.x * PI2 + p.y) * s;
   vec4 res;
   res.xyz = normalize(vec3(x, y, z)) * .1;
+  float seed = 441.45749;
+  res.x = random(p+vec2(seed, 0.));
+  res.y = random(p+vec2(seed, 10.));
+  res.z = random(p+vec2(seed, 200.));
+  res.xyz = res.xyz*2.-1.;
+  res.xyz *= 0.4;
+  // life
   res.w = floor(random(p)*1000.);
   return res;
 }
