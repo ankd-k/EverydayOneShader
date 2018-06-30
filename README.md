@@ -5,7 +5,7 @@ There is no file using through glslify, and these codes I put at here are not or
 
 ---
 
-GLSLライブコーディングの練習で制作したコードです。  
+毎日GLSLで作成したCGを投稿する[EverydayOneShader](https://twitter.com/search?q=%23EverydayOneShader&src=tyah)で作成したソースコードです。  
 実行にはatomパッケージの[VEDA](https://veda.gl/)を使用しています。  
 いくつかのコードではglslifyを使用しており、またほとんどのコードは整理していません。  
 別環境での動作は保証していません。
