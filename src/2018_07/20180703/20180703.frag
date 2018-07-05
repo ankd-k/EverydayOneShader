@@ -134,7 +134,8 @@ void main(){
   vec3 ip;
   if(castRay(camPos, dir, ip)){
     color = vec3(0.03*length(dir)) + df(ip-1.);
-    // color += 2.;
+    color = pow(clamp(color, 0., 1.), vec3(2.));
+    color += 2.;
     color = color*clamp(texture2D(backTexture, (1.-uv)+dot(normalize(dir), getNormal(ip))*0.15).rgb, 0., 1.5);
     color = abs(usin(time)-clamp(color, 0., 1.));
     // color = pow(color, vec3(.5));

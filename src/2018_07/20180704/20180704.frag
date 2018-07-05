@@ -1,4 +1,5 @@
 /*{
+pixelRatio: 1.,
 "PASSES":[
   {
     fs: 'back.frag',
@@ -65,10 +66,15 @@ float random(vec2 n){
   return fract(sin(dot(n, vec2(12.9898, 4.1414)))*43213.7894);
 }
 
+vec3 opRep(vec3 p, vec3 c){
+  return mod(p-0.5*c, c)-0.5*c;
+}
+
 float df(vec3 p){
+  p = opRep(p, vec3(1.));
   vec3 d = abs(p)-0.2;
-  float box = min(max(d.x, max(d.y, d.z)), 0.) + length(max(d,0.));
-  // return length(p * sin(p.x*40.)*sin(p.y*30.)*sin(p.z*20.)) - 0.2 ;
+  float box = min(max(d.x, max(d.y, d.z)), 0.) + length(max(d, 0.));
+  // return length(p) - 1. + sin(p.x*2.+time)*sin(p.y*3.+time*3.5)*sin(p.z*4.+time);
   return box;
 }
 
@@ -96,6 +102,10 @@ vec3 getNormal(vec3 p){
   ));
 }
 
+float usin(float x){
+  return 0.5+0.5*sin(x);
+}
+
 void main(){
   float t = mod(time*0.5, 60.);
   float tl = floor(t);
@@ -104,7 +114,7 @@ void main(){
   vec2 p = (gl_FragCoord.xy*2.-resolution)/min(resolution.x, resolution.y);
   vec3 color = vec3(0.);
 
-  float pct = easeOut(tf, 4.);
+  float pct = easeOut(tf, 5.);
 
   vec3 rs = 2.*PI*vec3(
       random(vec2(tl, 0.)),
@@ -117,22 +127,26 @@ void main(){
       random(vec2(tl+1., 2.))
     );
   vec3 r = (1.-pct)*rs + pct*rg;
+  r = vec3(time*0.2, time*0.3, time*0.1);
   mat3 rm = rotate(r);
 
   float ls = random(vec2(tl, 100.));
   float lg = random(vec2(tl+1., 100.));
   float l = (1.-pct)*ls + pct*lg;
 
-  vec3 camPos = rm * vec3(0., 0., -1.4 - l*0.3);
+  vec3 camPos = rm * vec3(0., 0., -2. - l);
   vec3 dir = rm*normalize(vec3(p, 1.));
 
   vec3 ip;
   if(castRay(camPos, dir, ip)){
     color = vec3(0.03*length(dir)) + df(ip-1.);
-    color += 0.;
-    color = color*texture2D(backTexture, (1.-uv)+dot(normalize(dir), getNormal(ip))*0.15).rgb;
+    color = pow(clamp(color, 0., 1.), vec3(2.));
+    color += 2.;
+    color = color*clamp(texture2D(backTexture, (1.-uv)+dot(normalize(dir), getNormal(ip))*0.15).rgb, 0., 1.5);
+    color = abs(usin(time)-clamp(color, 0., 1.));
+    // color = pow(color, vec3(.5));
   }else {
-    color = 1.-texture2D(backTexture, uv).rgb*0.6;
+    color = texture2D(backTexture, uv).rgb*0.6;
   }
 
   gl_FragColor = vec4(color, 1.);

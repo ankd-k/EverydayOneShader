@@ -203,7 +203,7 @@ void main(){
   float tlmod2 = mod(tl, 2.);
 
   // position
-  float num = 100.;
+  float num = 10.;
   float id = floor(mod(vertexId, num));
   vec3 center = rand3(id)+noise3(id+t);
   center = center*2.0-1.0;
@@ -219,7 +219,7 @@ void main(){
     pos2 = sphere(tl, center, .2);
     pos1 = cube(tl+1., center, vec3(.2));
   }
-  float pct = interporate(tr);
+  float pct = tr;//interporate(tr);
   vec3 pos = (1.-pct)*pos1 + pct*pos2;
 
   // camera

@@ -5,7 +5,7 @@
 
   "PASSES": [
     {
-      "vs": "./20180418_03.vert",
+      "vs": "./20180418.vert",
       "TARGET": "vertTexture",
     },
     {
