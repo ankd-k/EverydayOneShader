@@ -1,7 +1,7 @@
 /*{
   "pixelRatio": 1.,
-  "frameskip": 1,
-  "vertexCount": 1500000.,
+  "frameskip": 1.,
+  "vertexCount": 1000000.,
   "vertexMode": "POINTS",
 
   "PASSES": [
@@ -11,6 +11,7 @@
       FLOAT: true,
     },
     {
+      vs: './velocity.vert',
       fs: "./velocity.frag",
       TARGET: "velocityTexture",
       FLOAT: true,
@@ -48,20 +49,18 @@ void main(){
     vec2 uv = gl_FragCoord.xy/resolution;
     vec2 p = (gl_FragCoord.xy*2.-resolution)/min(resolution.x, resolution.y);
 
-    vec4 scene = texture2D(sceneTexture, uv);
-
-    gl_FragColor = vec4(0.95);
-    gl_FragColor -= scene;
-
-    gl_FragColor *= clamp(1./length(p), 0., 1.2);
 
     gl_FragColor =
     (uv.x<0.5 ? (
         uv.y<0.5 ? texture2D(positionTexture, uv*2.) :
                    texture2D(velocityTexture, uv*2.-vec2(0., 1.))
                 ):(
-        uv.y<0.5 ? texture2D(sceneTexture, uv*2.-vec2(1.,0.)) :
-                    vec4(0.)
+                  texture2D(sceneTexture, uv*vec2(2., 1.) - vec2(1., 0.))
+        // uv.y<0.5 ? texture2D(sceneTexture, uv*2.-vec2(1.,0.)) :
+        //             vec4(0.)
                 )
     );
+
+    // vec4 scene = texture2D(sceneTexture, uv);
+    // gl_FragColor = scene;
 }

@@ -1,16 +1,15 @@
-precision highp float;
+/*{
+
+}*/
+precision mediump float;
 
 uniform vec2 resolution;
 uniform vec2 mouse;
 uniform float time;
 
-uniform int FRAMEINDEX;
-
-uniform sampler2D positionTexture;
-uniform sampler2D velocityTexture;
+uniform sampler2D backbuffer;
 
 const float PI = 3.14159265359;
-const float PI2 = PI*2.;
 
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -46,7 +45,7 @@ float snoise(vec3 v){
            + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
 
   // Gradients: 7x7 points over a square, mapped onto an octahedron.
-  // The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
+// The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
   float n_ = 0.142857142857; // 1.0/7.0
   vec3  ns = n_ * D.wyz - D.xzx;
 
@@ -89,31 +88,63 @@ float snoise(vec3 v){
   return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
                                 dot(p2,x2), dot(p3,x3) ) );
 }
-vec3 snoise3(vec3 v){
-  return vec3(
-      snoise(v + vec3(18.2539, 1.467432, 81.45743)),
-      snoise(v + vec3(45.465741, 394.46571, 7.365759)),
-      snoise(v + vec3(5.316987112, 95.45974,2.1972823))
-    );
+
+vec3 rgb2hsv(vec3 c)
+{
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
 }
 
-vec3 reset(){
-  vec2 p = gl_FragCoord.st / resolution * 100.;
-  return vec3(0.);
+vec3 hsv2rgb(vec3 c)
+{
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+vec4 blur13(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
+  vec4 color = vec4(0.0);
+  vec2 off1 = vec2(1.411764705882353) * direction;
+  vec2 off2 = vec2(3.2941176470588234) * direction;
+  vec2 off3 = vec2(5.176470588235294) * direction;
+  color += texture2D(image, uv) * 0.1964825501511404;
+  color += texture2D(image, uv + (off1 / resolution)) * 0.2969069646728344;
+  color += texture2D(image, uv - (off1 / resolution)) * 0.2969069646728344;
+  color += texture2D(image, uv + (off2 / resolution)) * 0.09447039785044732;
+  color += texture2D(image, uv - (off2 / resolution)) * 0.09447039785044732;
+  color += texture2D(image, uv - (off3 / resolution)) * 0.010381362401148057;
+  color += texture2D(image, uv + (off3 / resolution)) * 0.010381362401148057;
+  return color;
 }
 
 void main(){
-  if(FRAMEINDEX==0){
-      vec3 vec = reset();
-      gl_FragColor = vec4(vec, 0.);
-  }else{
-    vec2 uv = gl_FragCoord.xy / resolution;
-    vec4 position = texture2D(positionTexture, uv);
-    vec4 velocity = texture2D(velocityTexture, uv);
+  float t = mod(time, 60.);
+  vec2 uv = gl_FragCoord.xy/resolution;
+  vec2 p = (gl_FragCoord.xy*2.-resolution)/min(resolution.x, resolution.y);
+  vec3 color = vec3(0.);
 
-    vec3 pos = position.xyz;
-    vec3 newVelocity = velocity.xyz + snoise3(pos*1.)*0.3;
-    // newVelocity *= 1./length(newVelocity);
-    gl_FragColor = vec4(normalize(newVelocity), 0.);
-  }
+  vec3 ink = hsv2rgb(vec3(mod(time*0.1, 2.*PI), 1., 1.));
+
+
+  vec2 m = mouse*2.-1.;
+  color += smoothstep(0.65, 1., 0.05/length(uv-mouse))*1. * ink;
+
+  vec4 bb = texture2D(backbuffer, uv);
+  vec4 blur = blur13(backbuffer, uv, resolution, vec2(1.2));
+  float density = length(bb.rgb);
+  vec4 bb2 = 1.-texture2D(backbuffer, uv+vec2(0., abs(snoise(vec3(uv*10., t*0.01*abs(snoise(vec3(uv*5.,t*0.1)))))*0.005)));
+  // vec4 bb2 = 1.-texture2D(backbuffer, uv + vec2(0., 1./resolution.y));
+
+  color += bb2.rgb*0.995;
+  // color = vec3(0.);
+  // color = pow(color, vec3(1.02));
+
+
+  color = 1.-color;
+  gl_FragColor = vec4(color, 1.);
 }
