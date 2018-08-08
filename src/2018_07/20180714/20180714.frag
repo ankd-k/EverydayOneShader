@@ -46,7 +46,7 @@ float random(vec2 n){
 }
 
 void main(){
-  float t = mod(time, 10.);
+  float t = mod(time*1.8, 10.);
   float tl = floor(t);
   float tl2 = floor(t*2.);
   float tl_1 = floor(t*10.)/10.;
@@ -68,7 +68,7 @@ void main(){
     p = fract(p);
     p = p*2.-1.;
   }
-  // if(mod(t*2., 2.)<1.) p *= rotate(PI*0.25);
+  if(mod(t*2., 2.)<1.) p *= rotate(PI*0.25);
 
   if(tl<1.){
     r = random(vec2(tl))*(1.-pct) + random(vec2(tl+1.))*pct;

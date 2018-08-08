@@ -1,0 +1,6 @@
+-- cps (240/60/4)
+
+-- do
+d1 $ every 2 (rev) (sound "[[bd*8 bd [bd bd*32] [bd*24 bd*16]] [[bd bd*2] bd [bd*12 bd*4] [bd*48 bd*32]], [[[bd*4 bd*2 bd bd*16] [bd*2 bd]] [bd bd bd*2 bd]]]")
+
+d1 silence

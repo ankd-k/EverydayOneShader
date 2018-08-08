@@ -70,7 +70,7 @@ void main(){
   scene = texture2D(sceneTexture, uv);
   back = texture2D(backbuffer, uv);
 
-  vec4 res = scene + back*0.7;
+  vec4 res = scene;// + back*0.7;
   // res = pow(res, vec4(10.));
   // res.xyz = normalize(res.xyz);
 

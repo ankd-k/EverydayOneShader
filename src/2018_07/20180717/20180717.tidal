@@ -1,0 +1,15 @@
+cps 1
+
+d1 $ s "bd"
+
+do
+  d1 $ s "bd*16"
+
+    $ every 5 (gap 4)
+    $ every 4 (chop 4)
+
+  c1 $ whenmod 15 12 (iter 8) $
+  whenmod 8 6 (jux (iter 4)) $
+  every 5 (gap 4) $ every 4 (chop 4) $
+
+hush
