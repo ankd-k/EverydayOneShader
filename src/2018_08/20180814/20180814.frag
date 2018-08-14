@@ -40,6 +40,19 @@ float usin(float x){
   return 0.5+0.5*sin(x);
 }
 
+float ease_in(float x, float n){
+  return pow(x, n);
+}
+float ease_out(float x, float n){
+  return 1.0-pow(1.0-x, n);
+}
+float ease_inout(float x, float n){
+  float x2 = x*2.0;
+  return x2<1. ?
+    ease_in(x2, n)*0.5 :
+    ease_out(x2-1., n)*0.5+0.5;
+}
+
 void main(){
   float t = mod(time, 600.);
   vec2 uv = gl_FragCoord.xy/resolution;
@@ -51,6 +64,8 @@ void main(){
   p = abs(p);
   float l = mod(length(p), 2.)<1. ? length(p) : 1.-length(p);
   float at = mod(atan(p.y, p.x), 2.)<1. ? atan(p.y, p.x) : 1.-atan(p.y, p.x);
+  float pct = ease_inout(fract(t*0.5), 4.);
+  at += floor(t)+pct;
   // uv = vec2(l, atan(p.y, p.x));
   uv = vec2(at,l);
   uv = fract(uv);

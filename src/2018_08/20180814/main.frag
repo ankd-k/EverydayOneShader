@@ -255,6 +255,6 @@ void main(){
 
   // color *= abs(sin(time));
 
-  gl_FragColor = vec4(1.-color, 1.);
+  gl_FragColor = vec4(color, 1.);
   // gl_FragColor = vec4(random(uv));
 }
