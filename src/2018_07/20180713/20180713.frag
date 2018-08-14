@@ -77,6 +77,7 @@ void main(){
   // if(dFdx(res.x))
   vec4 bg = vec4(0., 0.0, 0.01, 1.);
   gl_FragColor = res + bg;
+  // gl_FragColor = 1.-gl_FragColor;
   // gl_FragColor = vec4(1.-(dFdx(res)+dFdy(res)));
   // gl_FragColor = length(res.xyz) < 0.9 ? vec4(0.) : res;
 }
