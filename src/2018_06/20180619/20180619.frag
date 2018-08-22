@@ -61,7 +61,7 @@ void main(){
 
     float sn = snoise(vec2(cos(p.x*1.2)+sin(p.y*1.5), t*0.4));
     for(int i=0;i<4;i++){
-      sn = snoise(vec2(sin(p.x*0.5+sn)*sin((p.y*3.9+sn+t*2.)), t*0.3));
+      sn = snoise(vec2(sin(p.x*0.5+sn)*sin((p.y*3.9+sn+t*3.)), t*0.3));
     }
 
     gl_FragColor = vec4(sn);
