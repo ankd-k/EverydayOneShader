@@ -7,17 +7,24 @@ pixelRatio: 1.,
     FLOAT: true,
   },
   {
-
+    TARGET: 'sceneTexture',
   },
+  {
+
+  }
 ],
 }*/
 precision mediump float;
+
+#define AA 2
 
 uniform vec2 resolution;
 uniform vec2 mouse;
 uniform float time;
 
+uniform int PASSINDEX;
 uniform sampler2D backTexture;
+uniform sampler2D sceneTexture;
 
 const float PI = 3.14159265359;
 
@@ -114,40 +121,57 @@ void main(){
   vec2 p = (gl_FragCoord.xy*2.-resolution)/min(resolution.x, resolution.y);
   vec3 color = vec3(0.);
 
-  float pct = easeOut(tf, 5.);
 
-  vec3 rs = 2.*PI*vec3(
-      random(vec2(tl, 0.)),
-      random(vec2(tl, 1.)),
-      random(vec2(tl, 2.))
-    );
-  vec3 rg = 2.*PI*vec3(
-      random(vec2(tl+1., 0.)),
-      random(vec2(tl+1., 1.)),
-      random(vec2(tl+1., 2.))
-    );
-  vec3 r = (1.-pct)*rs + pct*rg;
-  r = vec3(time*0.2, time*0.3, time*0.1);
-  mat3 rm = rotate(r);
+  if(PASSINDEX==1){
+    float pct = easeOut(tf, 5.);
 
-  float ls = random(vec2(tl, 100.));
-  float lg = random(vec2(tl+1., 100.));
-  float l = (1.-pct)*ls + pct*lg;
+    vec3 rs = 2.*PI*vec3(
+        random(vec2(tl, 0.)),
+        random(vec2(tl, 1.)),
+        random(vec2(tl, 2.))
+      );
+    vec3 rg = 2.*PI*vec3(
+        random(vec2(tl+1., 0.)),
+        random(vec2(tl+1., 1.)),
+        random(vec2(tl+1., 2.))
+      );
+    vec3 r = (1.-pct)*rs + pct*rg;
+    // r = vec3(time*0.2, time*0.3, time*0.1);
+    mat3 rm = rotate(r);
 
-  vec3 camPos = rm * vec3(0., 0., -2. - l);
-  vec3 dir = rm*normalize(vec3(p, 1.));
+    float ls = random(vec2(tl, 100.));
+    float lg = random(vec2(tl+1., 100.));
+    float l = (1.-pct)*ls + pct*lg;
 
-  vec3 ip;
-  if(castRay(camPos, dir, ip)){
-    color = vec3(0.03*length(dir)) + df(ip-1.);
-    color = pow(clamp(color, 0., 1.), vec3(2.));
-    color += 2.;
-    color = color*clamp(texture2D(backTexture, (1.-uv)+dot(normalize(dir), getNormal(ip))*0.15).rgb, 0., 1.5);
-    color = abs(usin(time)-clamp(color, 0., 1.));
-    // color = pow(color, vec3(.5));
-  }else {
-    color = texture2D(backTexture, uv).rgb*0.6;
+    vec3 camPos = rm * vec3(0., 0., -2. - l);
+    vec3 dir = rm*normalize(vec3(p, 1.));
+
+    vec3 ip;
+    if(castRay(camPos, dir, ip)){
+      color = vec3(0.03*length(dir)) + df(ip-1.);
+      color = pow(clamp(color, 0., 1.), vec3(2.));
+      color += 2.;
+      color = color*clamp(texture2D(backTexture, (1.-uv)+dot(normalize(dir), getNormal(ip))*0.15).rgb, 0., 1.5);
+      color = abs(usin(time)-clamp(color, 0., 1.));
+      // color = pow(color, vec3(.5));
+    }else {
+      color = texture2D(backTexture, uv).rgb*0.6;
+    }
+    gl_FragColor = vec4(color, 1.);
+  }
+  else if(PASSINDEX==2){
+    vec2 offset = 1.0/resolution;
+
+    vec4 scene = vec4(0.);
+    for(int i=0;i<AA;i++){
+      for(int j=0;j<AA;j++){
+        scene += texture2D(sceneTexture, uv+offset*vec2(float(i), float(j)));
+      }
+    }
+    scene /= float(AA*AA);
+    // scene *= 1.5-length(p);
+    gl_FragColor = scene;
+
   }
 
-  gl_FragColor = vec4(color, 1.);
 }

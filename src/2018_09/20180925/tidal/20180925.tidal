@@ -1,0 +1,14 @@
+do
+   d1 $
+      whenmod 6 3 (0.25 <~) $
+      whenmod 7 4 (|=| shape "0.2 0.1") $
+      slow 2 $ s "flick*1 flick*4 sine*2 sine*2 "
+      |=| n (every 1 (0.25 <~) $ run 4)
+      |=| cut "2"
+   d2 $
+      every 2 (rev) $
+      every 3 (0.25 ~>) $
+      every 5 (|=| up "12 0 -5 3") $
+      slow 2 $ s "wobble*1 cc*8 sine*4 cp*1 "
+      |=| n (every 2 (0.25 <~) $ "11 10 3")
+      |=| cut "-1"
